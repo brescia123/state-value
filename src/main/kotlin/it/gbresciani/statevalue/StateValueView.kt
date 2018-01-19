@@ -5,6 +5,7 @@ import it.gbresciani.statevalue.StateValue.NoValue
 import it.gbresciani.statevalue.StateValue.WithValue
 
 interface StateValueRenderer<T> {
+      var currentStateValue: StateValue<T>
       fun render(stateValue: StateValue<T>)
 }
 
@@ -46,7 +47,11 @@ open class SimpleStateValueRenderer<T, out MV : View, out LV : View, out EV : Vi
     ErrorStateValueView<EV>,
     ValueStateValueView<VV> {
 
+      override var currentStateValue: StateValue<T> = NoValue.Missing()
+
       override fun render(stateValue: StateValue<T>) {
+            if (stateValue == currentStateValue) return
+            
             when (stateValue) {
                   is NoValue.Missing -> renderState(
                       show = missingView,
@@ -95,7 +100,11 @@ class FullStateValueRenderer<T, out MV : View, out LV : View, out EV : View, out
     WithValueLoadingStateValueView<WVLV>,
     WithValueErrorStateValueView<WVEV> {
 
+      override var currentStateValue: StateValue<T> = NoValue.Missing()
+
       override fun render(stateValue: StateValue<T>) {
+            if (stateValue == currentStateValue) return
+            
             when (stateValue) {
                   is NoValue.Missing -> renderState(
                       show = missingView,
