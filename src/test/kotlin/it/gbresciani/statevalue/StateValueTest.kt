@@ -1,11 +1,14 @@
 package it.gbresciani.statevalue
 
+import io.kotlintest.KTestJUnitRunner
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.Gen.Companion.oneOf
 import io.kotlintest.properties.Gen.Companion.string
 import io.kotlintest.properties.forAll
 import io.kotlintest.specs.ShouldSpec
+import org.junit.runner.RunWith
 
+@RunWith(KTestJUnitRunner::class)
 class StateValueTest : ShouldSpec() {
       init {
             "StateValue.copyToMissing" {
@@ -18,41 +21,34 @@ class StateValueTest : ShouldSpec() {
 
             "StateValue.copyToLoading" {
 
-                  "when called on a StateValue.NoValue" {
-                        should("return always a StateValue.NoValue.Loading") {
-                              forAll(StateValueGen.noValueGen<Int>(), StateValueGen.progressGen()) { stateValue, progress ->
-                                    stateValue.copyToLoading(progress) == StateValue.NoValue.Loading<Int>(progress)
-                              }
+                  should("return always a StateValue.NoValue.Loading when called on a StateValue.NoValue") {
+                        forAll(StateValueGen.noValueGen<Int>(), StateValueGen.progressGen()) { stateValue, progress ->
+                              stateValue.copyToLoading(progress) == StateValue.NoValue.Loading<Int>(progress)
                         }
                   }
-
-                  "when called on a StateValue.WithValue" {
-                        should("return always a StateValue.WithValue.Loading") {
-                              forAll(StateValueGen.withValueGen(Gen.int()), StateValueGen.progressGen()) { stateValue, progress ->
-                                    stateValue.copyToLoading(progress) == StateValue.WithValue.Loading(stateValue.value, progress)
-                              }
+                  should("return always a StateValue.WithValue.Loading when called on a StateValue.WithValue") {
+                        forAll(StateValueGen.withValueGen(Gen.int()), StateValueGen.progressGen()) { stateValue, progress ->
+                              stateValue.copyToLoading(progress) == StateValue.WithValue.Loading(stateValue.value, progress)
                         }
                   }
             }
 
             "StateValue.copyToError" {
 
-                  "when called on a StateValue.NoValue" {
-                        should("return always a StateValue.NoValue.Error") {
-                              forAll(StateValueGen.noValueGen<Int>(), Gen.string()) { stateValue, error ->
-                                    stateValue.copyToError(error) == StateValue.NoValue.Error<Int, String>(error)
-                              }
+                  should("return always a StateValue.NoValue.Error when called on a StateValue.NoValue") {
+                        forAll(StateValueGen.noValueGen<Int>(), Gen.string()) { stateValue, error ->
+                              stateValue.copyToError(error) == StateValue.NoValue.Error<Int, String>(error)
                         }
                   }
 
-                  "when called on a StateValue.WithValue" {
-                        should("return always a StateValue.WithValue.Error") {
-                              forAll(StateValueGen.withValueGen(Gen.int()), Gen.string()) { stateValue, error ->
-                                    stateValue.copyToError(error) == StateValue.WithValue.Error(stateValue.value, error)
-                              }
+                  should("return always a StateValue.WithValue.Error when called on a StateValue.WithValue") {
+                        forAll(StateValueGen.withValueGen(Gen.int()), Gen.string()) { stateValue, error ->
+                              stateValue.copyToError(error) == StateValue.WithValue.Error(stateValue.value, error)
                         }
                   }
             }
+
+
 
 
             "StateValue.copyToValue" {
