@@ -45,14 +45,14 @@ sealed class StateValue<T> {
         }
 
         data class Loading<T>(override val progress: LoadingState.Progress? = null) : NoValue<T>(), LoadingState
-        data class Error<T, E>(override val error: E? = null) : NoValue<T>(), ErrorState<E>
+        data class Error<T, out E>(override val error: E? = null) : NoValue<T>(), ErrorState<E>
     }
 
     sealed class WithValue<T> : StateValue<T>() {
         abstract val value: T
 
         data class Loading<T>(override val value: T, override val progress: LoadingState.Progress? = null) : WithValue<T>(), LoadingState
-        data class Error<T, E>(override val value: T, override val error: E? = null) : WithValue<T>(), ErrorState<E>
+        data class Error<T, out E>(override val value: T, override val error: E? = null) : WithValue<T>(), ErrorState<E>
         data class Value<T>(override val value: T) : WithValue<T>()
     }
 
