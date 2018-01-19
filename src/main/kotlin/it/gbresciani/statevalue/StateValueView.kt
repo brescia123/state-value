@@ -54,7 +54,7 @@ open class SimpleStateValueRenderer<T, out MV : View, out LV : View, out EV : Vi
             
             when (stateValue) {
                   is NoValue.Missing -> renderState(
-                      show = missingView,
+                      show = listOf(missingView),
                       hide = listOf(loadingView, errorView, valueView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
@@ -62,7 +62,7 @@ open class SimpleStateValueRenderer<T, out MV : View, out LV : View, out EV : Vi
                   )
                   is NoValue.Loading,
                   is WithValue.Loading -> renderState(
-                      show = loadingView,
+                      show = listOf(loadingView),
                       hide = listOf(missingView, errorView, valueView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
@@ -70,20 +70,21 @@ open class SimpleStateValueRenderer<T, out MV : View, out LV : View, out EV : Vi
                   )
                   is NoValue.Error<*, *>,
                   is WithValue.Error<*, *> -> renderState(
-                      show = errorView,
+                      show = listOf(errorView),
                       hide = listOf(missingView, loadingView, valueView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
 
                   )
                   is WithValue.Value -> renderState(
-                      show = valueView,
+                      show = listOf(valueView),
                       hide = listOf(missingView, loadingView, errorView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
 
                   )
             }
+            currentStateValue = stateValue
       }
 }
 
@@ -107,52 +108,53 @@ class FullStateValueRenderer<T, out MV : View, out LV : View, out EV : View, out
             
             when (stateValue) {
                   is NoValue.Missing -> renderState(
-                      show = missingView,
+                      show = listOf(missingView),
                       hide = listOf(loadingView, errorView, withValueLoadingView, withValueErrorView, valueView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
 
                   )
                   is NoValue.Loading -> renderState(
-                      show = loadingView,
+                      show = listOf(loadingView),
                       hide = listOf(missingView, errorView, withValueLoadingView, withValueErrorView, valueView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
 
                   )
                   is WithValue.Loading -> renderState(
-                      show = withValueLoadingView,
-                      hide = listOf(missingView, loadingView, errorView, withValueErrorView, valueView),
+                      show = listOf(withValueLoadingView, valueView),
+                      hide = listOf(missingView, loadingView, errorView, withValueErrorView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
 
                   )
                   is NoValue.Error<*, *> -> renderState(
-                      show = errorView,
+                      show = listOf(errorView),
                       hide = listOf(missingView, loadingView, withValueLoadingView, withValueErrorView, valueView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
 
                   )
                   is WithValue.Error<*, *> -> renderState(
-                      show = withValueErrorView,
-                      hide = listOf(missingView, loadingView, errorView, withValueLoadingView, valueView),
+                      show = listOf(withValueErrorView, valueView),
+                      hide = listOf(missingView, loadingView, errorView, withValueLoadingView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
 
                   )
                   is WithValue.Value -> renderState(
-                      show = valueView,
+                      show = listOf(valueView),
                       hide = listOf(missingView, loadingView, errorView, withValueLoadingView, withValueErrorView),
                       hidingStrategy = hidingStrategy,
                       animate = animate
 
                   )
             }
+            currentStateValue = stateValue
       }
 }
 
-fun renderState(show: View, hide: List<View>, hidingStrategy: HidingStrategy, animate: Boolean) {
+fun renderState(show: List<View>, hide: List<View>, hidingStrategy: HidingStrategy, animate: Boolean) {
       hide.forEach {
             it.visibleOrHide(
                 show = false,
@@ -160,9 +162,11 @@ fun renderState(show: View, hide: List<View>, hidingStrategy: HidingStrategy, an
                 animate = animate
             )
       }
-      show.visibleOrHide(
-          show = true,
-          hidingStrategy = hidingStrategy.androidInt,
-          animate = animate
-      )
+      show.forEach {
+            it.visibleOrHide(
+                show = true,
+                hidingStrategy = hidingStrategy.androidInt,
+                animate = animate
+            )
+      }
 }
