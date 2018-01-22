@@ -40,7 +40,7 @@ sealed class StateValue<T> {
 
     sealed class NoValue<T> : StateValue<T>() {
         class Missing<T> : NoValue<T>() {
-            override fun equals(other: Any?): Boolean = true
+            override fun equals(other: Any?): Boolean = other is Missing<*>
             override fun hashCode(): Int = super.hashCode()
         }
 
